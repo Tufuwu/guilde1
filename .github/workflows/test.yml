@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.9', '3.8']
+        python-version: ["3.8", "3.9"]
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -23,11 +23,16 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - name: Install dependencies
         run: pip install .[test] codecov
-
-      - name: Install additional packages
-        run: sudo apt-get install -y graphviz
 
       - name: Make run-tests.py executable
         run: chmod +x ./run-tests.py
@@ -38,7 +43,5 @@ jobs:
       - name: Upload coverage to Codecov
         if: success()
         run: codecov
-
-      - name: Clean up pip cache
-        if: success()
-        run: rm -f $HOME/.cache/pip/log/debug.log
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
