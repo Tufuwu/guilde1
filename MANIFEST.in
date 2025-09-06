@@ -1,1 +1,10 @@
-include mtgjson5/resources/*
+include AUTHORS.rst
+include LICENSE
+include MANIFEST.in
+include README.rst
+include test_docformatter.py
+recursive-include images *.png
+
+exclude .pre-commit-hooks.yaml
+exclude .travis.yml
+exclude Makefile

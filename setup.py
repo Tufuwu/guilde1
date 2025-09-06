@@ -1,63 +1,48 @@
-"""
-Installation setup for mtgjson5
-"""
-import configparser
-import pathlib
+#!/usr/bin/env python
 
-import setuptools
+"""Setup for docformatter."""
 
-# Establish project directory
-project_root: pathlib.Path = pathlib.Path(__file__).resolve().parent
+from __future__ import (absolute_import,
+                        division,
+                        print_function,
+                        unicode_literals)
 
-# Read config details to determine version-ing
-config_file = project_root.joinpath("mtgjson5/resources/mtgjson.properties")
-config = configparser.ConfigParser()
-if config_file.is_file():
-    config.read(str(config_file))
+import ast
+from pathlib import Path
 
-setuptools.setup(
-    name="mtgjson5",
-    version=config.get("MTGJSON", "version", fallback="5.0.0+fallback"),
-    author="Zach Halpern",
-    author_email="zach@mtgjson.com",
-    url="https://mtgjson.com/",
-    description="Magic: the Gathering compiled database generator",
-    long_description=project_root.joinpath("README.md").open(encoding="utf-8").read(),
-    long_description_content_type="text/markdown",
-    license="MIT",
-    classifiers=[
-        "Intended Audience :: Developers",
-        "Intended Audience :: Education",
-        "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: MIT License",
-        "Natural Language :: English",
-        "Operating System :: MacOS :: MacOS X",
-        "Operating System :: Microsoft :: Windows :: Windows 10",
-        "Operating System :: Unix",
-        "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python",
-        "Topic :: Database",
-        "Topic :: Software Development :: Version Control :: Git",
-    ],
-    keywords=[
-        "Big Data",
-        "Card Games",
-        "Collectible",
-        "Database",
-        "JSON",
-        "MTG",
-        "MTGJSON",
-        "Trading Cards",
-        "Magic: The Gathering",
-    ],
-    include_package_data=True,
-    packages=setuptools.find_packages(),
-    install_requires=project_root.joinpath("requirements.txt")
-    .open(encoding="utf-8")
-    .readlines()
-    if project_root.joinpath("requirements.txt").is_file()
-    else [],  # Use the requirements file, if able
-)
+from setuptools import setup
+
+
+def version():
+    """Return version string."""
+    with open('docformatter.py') as input_file:
+        for line in input_file:
+            if line.startswith('__version__'):
+                return ast.parse(line).body[0].value.s
+
+
+setup(name='docformatter',
+        version=version(),
+        description='Formats docstrings to follow PEP 257.',
+        long_description=Path('README.rst').read_text(),
+        license='Expat License',
+        author='Steven Myint',
+        url='https://github.com/myint/docformatter',
+        classifiers=['Intended Audience :: Developers',
+                    'Environment :: Console',
+                    'Programming Language :: Python :: 3',
+                    'Programming Language :: Python :: 3.6',
+                    'Programming Language :: Python :: 3.7',
+                    'Programming Language :: Python :: 3.8',
+                    'Programming Language :: Python :: 3.9',
+                    'Programming Language :: Python :: 3.10',
+                    'Programming Language :: Python :: Implementation',
+                    'Programming Language :: Python :: Implementation :: PyPy',
+                    'Programming Language :: Python :: Implementation :: CPython',
+                    'License :: OSI Approved :: MIT License'],
+        keywords='PEP 257, pep257, style, formatter, docstrings',
+        py_modules=['docformatter'],
+        entry_points={
+            'console_scripts': ['docformatter = docformatter:main']},
+        install_requires=['untokenize'],
+        test_suite='test_docformatter')
