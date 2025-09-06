@@ -1,64 +1,19 @@
-# crazy-compiler standard excludes
-/projectlogo.png
-/docs/_build/
-*.[1-9]
+# Python cached bytecode files
+*.pyc
+*.pyo
+*.pyd
 
-# editor artefacts
+# Temporary files, usually created by text editors (vim)
+*.swp
 *~
-.#*
-\#*#
-.*.swp
 
-#  build artefacts
-/.sconf_temp
-/.sconsign.*
-/config.h
-/config.log
-/config.status
-/autom4te*.cache
-/options.cache
-/stamp-h1
+# Created by setup.py sdist
+build/
+dist/
+pyperformance.egg-info/
 
-# C, C++ build artefacts
-*.[oa]
-*.l[oa]
-*.al
-.libs
-.deps
-*.so
-*.so.[0-9]*
-*.rej
+# Created by the pyperformance script
+venv/
 
-*.dll
-.idea
-
-# Python build artefacts
-/build/
-/dist/
-/_venv/
-*.py[cod]
-*.egg
-*.egg-info
-*.egg-link
-
-/nosetests.xml
-/.cache
-/.coverage
-/.pytest_cache
-/.tox
-/.achievements
-/.installed.cfg
-/.ropeproject
-
-# Mr Developer
-/.mr.developer.cfg
-/.project
-/.pydevproject
-
-# OS generated files
-*.DS_[sS]Store*
-ehthumbs.db
-Icon?
-Thumbs.db
-*.pid
-._.**~
+# Created by the tox program
+.tox/

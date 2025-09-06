@@ -1,79 +1,116 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
+
+# FIXME:
 #
-# Copyright 2015-2019 by Hartmut Goebel <h.goebel@crazy-compilers.com>
+# - REENABLE HG_STARTUP BENCHMARK.
 #
-# This file is part of unittest2pytest.
+# Update dependencies:
 #
-# unittest2pytest is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+#  - python3 -m pip install --user --upgrade pip-tools
+#  - git clean -fdx  # remove all untracked files!
+#  - (cd pyperformance; pip-compile --upgrade requirements.in)
 #
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-# General Public License for more details.
+# Prepare a release:
 #
-# You should have received a copy of the GNU General Public License
-# along with this program. If not, see <http://www.gnu.org/licenses/>.
+#  - git pull --rebase
+#  - Remove untracked files/dirs: git clean -fdx
+#  - maybe update version in pyperformance/__init__.py and doc/conf.py
+#  - set release date in doc/changelog.rst
+#  - git commit -a -m "prepare release x.y"
+#  - run tests: tox --parallel auto
+#  - git push
+#  - check Travis CI status:
+#    https://travis-ci.com/github/python/pyperformance
+#  - check AppVeyor status:
+#    https://ci.appveyor.com/project/lazka/pyperformance-rdqv8
 #
+# Release a new version:
+#
+#  - git tag VERSION
+#  - git push --tags
+#  - Remove untracked files/dirs: git clean -fdx
+#  - python3 setup.py sdist bdist_wheel
+#  - twine upload dist/*
+#
+# After the release:
+#
+#  - set version to n+1: pyperformance/__init__.py and doc/conf.py
+#  - git commit -a -m "post-release"
+#  - git push
 
-from setuptools import setup
-import re
+# Import just to get the version
+import pyperformance
+
+VERSION = pyperformance.__version__
+
+DESCRIPTION = 'Python benchmark suite'
+CLASSIFIERS = [
+    'Development Status :: 5 - Production/Stable',
+    'Intended Audience :: Developers',
+    'License :: OSI Approved :: MIT License',
+    'Natural Language :: English',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python',
+]
 
 
-def get_version(filename):
-    """
-    Return package version as listed in `__version__` in `filename`.
-    """
-    init_py = open(filename).read()
-    return re.search("__version__ = ['\"]([^'\"]+)['\"]", init_py).group(1)
+# put most of the code inside main() to be able to import setup.py in
+# unit tests
+def main():
+    import io
+    import os.path
+    from setuptools import setup
+
+    with io.open('README.rst', encoding="utf8") as fp:
+        long_description = fp.read().strip()
+
+    packages = [
+        'pyperformance',
+        'pyperformance.benchmarks',
+        'pyperformance.benchmarks.data',
+        'pyperformance.benchmarks.data.2to3',
+        'pyperformance.tests',
+        'pyperformance.tests.data',
+    ]
+
+    data = {
+        'pyperformance': ['requirements.txt'],
+        'pyperformance.tests': ['data/*.json'],
+    }
+
+    # Search for all files in pyperformance/benchmarks/data/
+    data_dir = os.path.join('pyperformance', 'benchmarks', 'data')
+    benchmarks_data = []
+    for root, dirnames, filenames in os.walk(data_dir):
+        # Strip pyperformance/benchmarks/ prefix
+        root = os.path.normpath(root)
+        root = root.split(os.path.sep)
+        root = os.path.sep.join(root[2:])
+
+        for filename in filenames:
+            filename = os.path.join(root, filename)
+            benchmarks_data.append(filename)
+    data['pyperformance.benchmarks'] = benchmarks_data
+
+    options = {
+        'name': 'pyperformance',
+        'version': VERSION,
+        'author': 'Collin Winter and Jeffrey Yasskin',
+        'license': 'MIT license',
+        'description': DESCRIPTION,
+        'long_description': long_description,
+        'url': 'https://github.com/python/benchmarks',
+        'classifiers': CLASSIFIERS,
+        'packages': packages,
+        'package_data': data,
+        'entry_points': {
+            'console_scripts': ['pyperformance=pyperformance.cli:main']
+        },
+        'install_requires': ["pyperf"],
+    }
+    setup(**options)
 
 
-version = get_version('unittest2pytest/__init__.py')
-
-
-def read(filename):
-    return open(filename, 'r', encoding='utf-8').read()
-
-
-long_description = '\n\n'.join([read('README.rst'),
-                                read('CHANGES.rst')])
-
-
-setup(
-    name="unittest2pytest",
-    license='GPLv3+',
-    version=version,
-    description="Convert unittest test-cases to pytest",
-    long_description=long_description,
-    author="Hartmut Goebel",
-    author_email="h.goebel@crazy-compilers.com",
-    url="https://github.com/pytest-dev/unittest2pytest",
-    packages=["unittest2pytest", "unittest2pytest.fixes"],
-    entry_points={
-        'console_scripts': [
-            'unittest2pytest = unittest2pytest.__main__:main',
-        ],
-    },
-    classifiers=[
-        "Development Status :: 4 - Beta",
-        "Environment :: Console",
-        "Intended Audience :: Developers",
-        "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
-        "Operating System :: OS Independent",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-        "Topic :: Software Development",
-        "Topic :: Utilities",
-    ],
-    python_requires=">=3.6",
-    zip_safe=False
-)
+if __name__ == '__main__':
+    main()
