@@ -1,17 +1,29 @@
-include .coveragerc
-include LICENSE
-include NEWS.rst
-include towncrier.ini
+include AUTHORS
+include COPYING
+include ChangeLog
+include INSTALL
+include MANIFEST.in
+include README.cptrace
+include TODO
 include tox.ini
-exclude mypy.ini
-include src/incremental/py.typed
+include SYSCALL_PROTOTYPES.codegen.py
 
-recursive-include src/incremental *.py
+include cptrace/Makefile
+include cptrace/cptrace.c
+include cptrace/version.py
 
-prune .travis
-prune tests
+include doc/*.rst doc/conf.py doc/make.bat doc/Makefile
 
-exclude examplesetup.py
-prune src/exampleproj
+include examples/itrace.py
+include examples/simple_dbg.py
+include pyflakes.sh
+include python3.0.patch
+include setup_cptrace.py
 
-prune src/incremental/newsfragments
+# Tests
+include runtests.py
+include test_doc.py
+include tests/test_*.py
+include tests/crash/*.c
+include tests/crash/BSDmakefile
+include tests/crash/Makefile
