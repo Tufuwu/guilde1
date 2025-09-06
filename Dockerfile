@@ -1,7 +1,12 @@
+FROM ubuntu:20.04
 
-FROM python:2.7.14-alpine3.7
+RUN apt-get -y update
+RUN apt-get install -y vim python3 python3-pip python3-wheel python3-six python3-pip
 
-COPY ./requirements.txt /mnt/dynamodump/requirements.txt
-COPY ./dynamodump.py /usr/local/bin/dynamodump
+RUN mkdir /dk
+COPY . /dk
+WORKDIR /dk
+RUN python3 -m pip install -r requirements.txt
+RUN python3 -m pip install autopep8
 
-RUN pip install -r /mnt/dynamodump/requirements.txt
+CMD ["/bin/bash"]

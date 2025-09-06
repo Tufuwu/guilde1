@@ -1,39 +1,22 @@
-*.py[cod]
-
-# C extensions
-*.so
-
-# Packages
-*.egg
-*.egg-info
-dist
-build
-eggs
-parts
-bin
-var
-sdist
-develop-eggs
-.installed.cfg
-lib
-lib64
-__pycache__
-
-# Installer logs
-pip-log.txt
-
-# Unit test / coverage reports
+*.pyc
+*.sqlite
+*.bat
+.idea/
+\current*
 .coverage
-.tox
-nosetests.xml
+.DS_Store
 
-# Translations
-*.mo
+# for experimentation
+scratch.py
+lineups.sh
+data/df.csv
+data/fd.csv
+experimental/
 
-# Mr Developer
-.mr.developer.cfg
-.project
-.pydevproject
+.spyproject
+.vscode
+start_container.bat
 
-dump
-dynamodump.iml
+dist/
+draftfast.egg-info/
+
