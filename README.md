@@ -1,62 +1,25 @@
-[![Build Status](https://travis-ci.org/grigorig/stcgal.svg)](https://travis-ci.org/grigorig/stcgal)
-[![Coverage Status](https://coveralls.io/repos/github/grigorig/stcgal/badge.svg?branch=coveralls)](https://coveralls.io/github/grigorig/stcgal?branch=coveralls)
-[![PyPI version](https://badge.fury.io/py/stcgal.svg)](https://badge.fury.io/py/stcgal)
+InfiniSDK
+=========
 
-stcgal - STC MCU ISP flash tool
-===============================
 
-stcgal is a command line flash programming tool for [STC MCU Ltd](http://stcmcu.com/).
-8051 compatible microcontrollers.
+|                       |                                                                                    |
+|-----------------------|------------------------------------------------------------------------------------|
+| Build Status          | ![Build Status](https://secure.travis-ci.org/Infinidat/infinisdk.png?branch=master) |
+| Supported Versions    | ![Supported Versions](https://img.shields.io/pypi/pyversions/infinisdk.svg)    |
+| Latest Version        | ![Latest Version](https://img.shields.io/pypi/v/infinisdk.svg)                  |
 
-STC microcontrollers have an UART/USB based boot strap loader (BSL). It
-utilizes a packet-based protocol to flash the code memory and IAP
-memory over a serial link. This is referred to as in-system programming
-(ISP).  The BSL is also used to configure various (fuse-like) device
-options. Unfortunately, this protocol is not publicly documented and
-STC only provide a (crude) Windows GUI application for programming.
-
-stcgal is a full-featured Open Source replacement for STC's Windows
-software; it supports a wide range of MCUs, it is very portable and
-suitable for automation.
-
-Features
+Overview
 --------
 
-* Support for STC 89/90/10/11/12/15/8 series
-* UART and USB BSL support
-* Display part info
-* Determine operating frequency
-* Program flash memory
-* Program IAP/EEPROM
-* Set device options
-* Read unique device ID (STC 10/11/12/15/8)
-* Trim RC oscillator frequency (STC 15/8)
-* Automatic power-cycling with DTR toggle or a custom shell command
-* Automatic UART protocol detection
+InfiniSDK is the official Python SDK for INFINIDAT's products.  It provides a clean interface for creating, deleting, querying and manipulating API objects.
 
-Quickstart
-----------
 
-Install stcgal (might need root/administrator privileges):
-    
-    pip3 install stcgal
+* [Infinidat Homepage](https://www.infinidat.com)
 
-Call stcgal and show usage:
+* [InfiniSDK Documentation](https://infinisdk.readthedocs.org/)
 
-    stcgal -h
 
-Further information
--------------------
-
-[Installation](doc/INSTALL.md)
-
-[How to use stcgal](doc/USAGE.md)
-
-[Frequently Asked Questions](doc/FAQ.md)
-
-[List of tested MCU models](doc/MODELS.md)
-
-License
+Licence
 -------
+BSD-3
 
-stcgal is published under the MIT license.
