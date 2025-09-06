@@ -1,14 +1,7 @@
-include LICENSE
-include NOTICE
-include README.md
+include CHANGES.rst
+include COPYING-GPLv3.txt
+include README.rst
 
-include pympler/templates/*.html
-include pympler/templates/*.tpl
-include pympler/templates/*.css
-include pympler/templates/*.js
-
-include pympler/static/*.js
-
-recursive-include doc *
-prune doc/source
-prune doc/build
+recursive-include tests *
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
