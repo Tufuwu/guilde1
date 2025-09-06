@@ -1,43 +1,30 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# FeedCrawler
-# Projekt von https://github.com/rix1337
+import os.path
+from setuptools import setup
 
-import setuptools
+with open(os.path.join(os.path.dirname(__file__), "README.md")) as f:
+    readme = f.read()
 
-from feedcrawler.version import get_version
-
-try:
-    with open('README.md', encoding='utf-8') as f:
-        long_description = f.read()
-except:
-    import io
-
-    long_description = io.open('README.md', encoding='utf-8').read()
-
-with open('requirements.txt') as f:
-    required = f.read().splitlines()
-
-setuptools.setup(
-    name="feedcrawler",
-    version=get_version(),
-    author="rix1337",
-    author_email="",
-    description="Automating JDownloader Downloads (German!)",
-    long_description=long_description,
+setup(
+    name="sphinx-multiversion",
+    description="Add support for multiple versions to sphinx",
+    long_description=readme,
     long_description_content_type="text/markdown",
-    url="https://github.com/rix1337/FeedCrawler",
-    packages=setuptools.find_packages(),
-    include_package_data=True,
-    install_requires=required,
-    zip_safe=False,
     classifiers=[
+        "License :: OSI Approved :: BSD License",
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
     ],
+    author="Jan Holthuis",
+    author_email="holthuis.jan@googlemail.com",
+    url="https://holzhaus.github.io/sphinx-multiversion/",
+    version="0.2.4",
+    install_requires=["sphinx >= 2.1"],
+    license="BSD",
+    packages=["sphinx_multiversion"],
     entry_points={
-        'console_scripts': [
-            'feedcrawler = feedcrawler.crawler:main',
-        ],
+        "console_scripts": ["sphinx-multiversion=sphinx_multiversion:main",],
     },
 )

@@ -1,4 +1,4 @@
-name: Python CI
+name: CI
 
 on:
   push:
@@ -14,10 +14,10 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ['3.8', '3.9']
+        python-version: ['3.8']
 
     steps:
-    - name: Check out repository
+    - name: Checkout repository
       uses: actions/checkout@v2
 
     - name: Set up Python ${{ matrix.python-version }}
@@ -25,21 +25,26 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Cache pip
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-
     - name: Install dependencies
       run: |
-        mkdir -p /home/runner/config
-        pip install -r requirements.txt
+        python -m pip install --upgrade pip
+        pip install doc8 sphinx
+        pip install git+https://github.com/osrf/sphinx-tabs
+        pip install sphinx_multiversion
 
-    - name: Run tests
+    - name: Build documentation
       run: |
-        python FeedCrawler.py --port=9090 --config="/home/runner/config" --travis_ci --log-level=DEBUG
-      continue-on-error: true
+        make html 2> stderr.log
+        cat stderr.log
 
+    - name: Lint documentation
+      run: |
+        doc8 --ignore D001 --ignore-path build --ignore-path source/Tutorials/Actions
+        doc8 --ignore D000 --ignore D001 --ignore-path build source/Tutorials/Actions
+
+    - name: Check for stderr output
+      run: |
+        if [ -s "stderr.log" ]; then
+          echo "Errors found in stderr.log"
+          exit 1
+        fi
