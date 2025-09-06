@@ -1,58 +1,63 @@
 """
-Django-MongoEngine
-------------------
-
-Django support for MongoDB using MongoEngine.
-
-This is work-in-progress. Some things working, some don't. Fix what you need and make
-pull-request.
-
-Links
-`````
-
-* `development version
-  <https://github.com/MongoEngine/django-mongoengine>`_
-
+Installation setup for mtgjson5
 """
-from setuptools import setup, find_packages
-import sys
-import os
+import configparser
+import pathlib
 
+import setuptools
 
-__version__ = '0.4.6'
-__description__ = 'Django support for MongoDB via MongoEngine'
-__license__ = 'BSD'
-__author__ = 'Ross Lawley'
-__email__ = 'ross.lawley@gmail.com'
+# Establish project directory
+project_root: pathlib.Path = pathlib.Path(__file__).resolve().parent
 
+# Read config details to determine version-ing
+config_file = project_root.joinpath("mtgjson5/resources/mtgjson.properties")
+config = configparser.ConfigParser()
+if config_file.is_file():
+    config.read(str(config_file))
 
-sys.path.insert(0, os.path.dirname(__file__))
-
-
-setup(
-    name='django-mongoengine',
-    version=__version__,
-    url='https://github.com/mongoengine/django-mongoengine',
-    download_url='https://github.com/mongoengine/django-mongoengine/tarball/master',
-    license=__license__,
-    author=__author__,
-    author_email=__email__,
-    description=__description__,
-    long_description=__doc__,
-    zip_safe=False,
-    platforms='any',
-    install_requires=["django>2.2,<3.3", "mongoengine>=0.14"],
-    packages=find_packages(exclude=('doc', 'docs',)),
-    include_package_data=True,
+setuptools.setup(
+    name="mtgjson5",
+    version=config.get("MTGJSON", "version", fallback="5.0.0+fallback"),
+    author="Zach Halpern",
+    author_email="zach@mtgjson.com",
+    url="https://mtgjson.com/",
+    description="Magic: the Gathering compiled database generator",
+    long_description=project_root.joinpath("README.md").open(encoding="utf-8").read(),
+    long_description_content_type="text/markdown",
+    license="MIT",
     classifiers=[
-        'Development Status :: 4 - Beta',
-        'Environment :: Web Environment',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
-        'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-        'Framework :: Django'
-    ]
+        "Intended Audience :: Developers",
+        "Intended Audience :: Education",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved :: MIT License",
+        "Natural Language :: English",
+        "Operating System :: MacOS :: MacOS X",
+        "Operating System :: Microsoft :: Windows :: Windows 10",
+        "Operating System :: Unix",
+        "Programming Language :: Python :: 3 :: Only",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python",
+        "Topic :: Database",
+        "Topic :: Software Development :: Version Control :: Git",
+    ],
+    keywords=[
+        "Big Data",
+        "Card Games",
+        "Collectible",
+        "Database",
+        "JSON",
+        "MTG",
+        "MTGJSON",
+        "Trading Cards",
+        "Magic: The Gathering",
+    ],
+    include_package_data=True,
+    packages=setuptools.find_packages(),
+    install_requires=project_root.joinpath("requirements.txt")
+    .open(encoding="utf-8")
+    .readlines()
+    if project_root.joinpath("requirements.txt").is_file()
+    else [],  # Use the requirements file, if able
 )
