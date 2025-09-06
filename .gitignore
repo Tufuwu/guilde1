@@ -1,6 +1,7 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+*$py.class
 
 # C extensions
 *.so
@@ -13,7 +14,8 @@ develop-eggs/
 dist/
 downloads/
 eggs/
-#lib/
+.eggs/
+lib/
 lib64/
 parts/
 sdist/
@@ -36,9 +38,12 @@ pip-delete-this-directory.txt
 htmlcov/
 .tox/
 .coverage
+.coverage.*
 .cache
 nosetests.xml
 coverage.xml
+*,cover
+.hypothesis/
 
 # Translations
 *.mo
@@ -53,16 +58,10 @@ docs/_build/
 # PyBuilder
 target/
 
-# IDE
-.idea
+#Ipython Notebook
+.ipynb_checkpoints
 
-# Vim
-*.swp
-
-# Misc
-tmp*
-debug
-benchmark*.prof
-*.bak
-.eggs
-.pytest_cache/
+# Eclipse
+# -------
+.pydevproject
+.project
