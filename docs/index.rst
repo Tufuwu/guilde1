@@ -1,20 +1,18 @@
-:py:mod:`tableone` documentation!
-====================================
-
-:py:mod:`tableone` is a package for easily producing summary measures of a dataset for use in publications.
-See :doc:`the quickstart <quickstart>` to get started.
+.. include:: ../README.rst
 
 .. toctree::
    :maxdepth: 1
-   :caption: Getting Started
+   :caption: Contents
 
-   quickstart
-   bestpractice
-   install
-   contributing
+   file_import_parameters
+   api/index
+   changelog
 
-.. toctree::
-  :maxdepth: 1
-  :caption: Package Reference
 
-  tableone
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
