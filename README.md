@@ -1,113 +1,91 @@
-# django-sendgrid-v5
+Python FHIR Parser
+==================
+A Python FHIR specification parser for model class generation.
+If you've come here because you want _Swift_ or _Python_ classes for FHIR data models, look at our client libraries instead:
 
-[![Latest Release](https://img.shields.io/pypi/v/django-sendgrid-v5.svg)](https://pypi.python.org/pypi/django-sendgrid-v5/)
+- [Swift-FHIR][] and [Swift-SMART][]
+- Python [client-py][]
 
-This package implements an email backend for Django that relies on sendgrid's REST API for message delivery.
+The `main` branch is currently capable of parsing _R4_
+and has preliminary support for _R5_.
 
-It is under active development, and pull requests are more than welcome\!
-
-To use the backend, simply install the package (using pip), set the `EMAIL_BACKEND` setting in Django, and add a `SENDGRID_API_KEY` key (set to the appropriate value) to your Django settings.
-
-## How to Install
-
-1. `pip install django-sendgrid-v5`
-2. In your project's settings.py script:
-    1. Set `EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"`
-    2. Set the SENDGRID\_API\_KEY in settings.py to your api key that was provided to you by sendgrid. `SENDGRID_API_KEY = os.environ["SENDGRID_API_KEY"]`
-
-### Other settings
-
-1. To toggle sandbox mode (when django is running in DEBUG mode), set `SENDGRID_SANDBOX_MODE_IN_DEBUG = True/False`.
-    1. To err on the side of caution, this defaults to True, so emails sent in DEBUG mode will not be delivered, unless this setting is explicitly set to False.
-2. `SENDGRID_ECHO_TO_STDOUT` will echo to stdout or any other file-like
-    object that is passed to the backend via the `stream` kwarg.
-3. `SENDGRID_TRACK_EMAIL_OPENS` - defaults to true and tracks email open events via the Sendgrid service. These events are logged in the Statistics UI, Email Activity interface, and are reported by the Event Webhook.
-4. `SENDGRID_TRACK_CLICKS_HTML` - defaults to true and, if enabled in your Sendgrid account, will tracks click events on links found in the HTML message sent.
-5. `SENDGRID_TRACK_CLICKS_PLAIN` - defaults to true and, if enabled in your Sendgrid account, will tracks click events on links found in the plain text message sent.
-
-## Usage
-
-### Simple
-
-```python
-from django.core.mail import send_mail
-
-send_mail(
-    'Subject here',
-    'Here is the message.',
-    'from@example.com',
-    ['to@example.com'],
-    fail_silently=False,
-)
-```
-
-### Dynamic Template with JSON Data
-
-First, create a [dynamic template](https://mc.sendgrid.com/dynamic-templates) and copy the ID.
-
-```python
-from django.core.mail import EmailMessage
-
-msg = EmailMessage(
-  from_email='to@example.com',
-  to=['to@example.com'],
-)
-msg.template_id = "your-dynamic-template-id"
-msg.dynamic_template_data = {
-  "title": foo
-}
-msg.send(fail_silently=False)
-```
-
-### The kitchen sink EmailMessage (all of the supported sendgrid-specific properties)
-
-```python
-from django.core.mail import EmailMessage
-
-msg = EmailMessage(
-  from_email='to@example.com',
-  to=['to@example.com'],
-  cc=['cc@example.com'],
-  bcc=['bcc@example.com'],
-)
-
-# Personalization custom args
-# https://sendgrid.com/docs/for-developers/sending-email/personalizations/
-msg.custom_args = {'arg1': 'value1', 'arg2': 'value2'}
-
-# Reply to email address (sendgrid only supports 1 reply-to email address)
-msg.reply_to = 'reply-to@example.com'
-
-# Send at (accepts an integer per the sendgrid docs)
-# https://sendgrid.com/docs/API_Reference/SMTP_API/scheduling_parameters.html#-Send-At
-msg.send_at = 1600188812
-
-# Transactional templates
-# https://sendgrid.com/docs/ui/sending-email/how-to-send-an-email-with-dynamic-transactional-templates/
-msg.template_id = "your-dynamic-template-id"
-msg.dynamic_template_data = {  # Sendgrid v6+ only
-  "title": foo
-}
-msg.substitutions = {
-  "title": bar
-}
-
-# Unsubscribe groups
-# https://sendgrid.com/docs/ui/sending-email/unsubscribe-groups/
-msg.asm = {'group_id': 123, 'groups_to_display': ['group1', 'group2']}
-
-# Categories
-# https://sendgrid.com/docs/glossary/categories/
-msg.categories = ['category1', 'category2']
-
-# IP Pools
-# https://sendgrid.com/docs/ui/account-and-settings/ip-pools/
-msg.ip_pool_name = 'my-ip-pool'
+This work is licensed under the [APACHE license][license].
+FHIR® is the registered trademark of [HL7][] and is used with the permission of HL7.
 
 
-msg.send(fail_silently=False)
-```
+Tech
+----
 
-## Examples
+The _generate.py_ script downloads [FHIR specification][fhir] files, parses the profiles (using _fhirspec.py_) and represents them as `FHIRClass` instances with `FHIRClassProperty` properties (found in _fhirclass.py_).
+Additionally, `FHIRUnitTest` (in _fhirunittest.py_) instances get created that can generate unit tests from provided FHIR examples.
+These representations are then used by [Jinja][] templates to create classes in certain programming languages, mentioned below.
 
-- Marcelo Canina [(@marcanuy)](https://github.com/marcanuy) wrote a great article demonstrating how to integrate `django-sendgrid-v5` into your Django application on his site: [https://simpleit.rocks/python/django/adding-email-to-django-the-easiest-way/](https://simpleit.rocks/python/django/adding-email-to-django-the-easiest-way/)
+This script does its job for the most part, but it doesn't yet handle all FHIR peculiarities and there's no guarantee the output is correct or complete.
+This repository **does not include the templates and base classes** needed for class generation, you must do this yourself in your project.
+You will typically add this repo as a submodule to your framework project, create a directory that contains the necessary base classes and templates, create _settings_ and _mappings_ files and run the script.
+Examples on what you would need to do for Python classes can be found in _Default/settings.py_, _Default/mappings.py_ and _Sample/templates*_.
+
+
+Use
+---
+
+1. Add `fhir-parser` as a submodule/subdirectory to the project that will use it
+2. Create the file `mappings.py` in your project, to be copied to fhir-parser root.
+    First, import the default mappings using `from Default.mappings import *` (unless you will define all variables yourself anyway).
+    Then adjust your `mappings.py` to your liking by overriding the mappings you wish to change.
+3. Similarly, create the file `settings.py` in your project.
+    First, import the default settings using `from Default.settings import *` and override any settings you want to change.
+    Then, import the mappings you have just created with `from mappings import *`.
+    The default settings import the default mappings, so you may need to overwrite more keys from _mappings_ than you'd first think.
+    You most likely want to change the topmost settings found in the default file, which are determining where the templates can be found and generated classes will be copied to.
+4. Install the generator's requirements by running `pip3` (or `pip`):
+    ```bash
+    pip3 install -r requirements.txt
+    ```
+
+5. Create a script that copies your `mappings.py` and `settings.py` file to the root of `fhir-parser`, _cd_s into `fhir-parser` and then runs `generate.py`.
+    The _generate_ script by default wants to use Python _3_, issue `python generate.py` if you don't have Python 3 yet.
+    * Supply the `-f` flag to force a re-download of the spec.
+    * Supply the `--cache-only` (`-c`) flag to deny the re-download of the spec and only use cached resources (incompatible with `-f`).
+
+> NOTE that the script currently overwrites existing files without asking and without regret.
+
+
+Languages
+=========
+
+This repo used to contain templates for Python and Swift classes, but these have been moved to the respective framework repositories.
+A very basic Python sample implementation is included in the `Sample` directory, complementing the default _mapping_ and _settings_ files in `Default`.
+
+To get a sense of how to use _fhir-parser_, take a look at these libraries:
+
+- [**Swift-FHIR**][swift-fhir]
+- [**fhirclient**][client-py]
+
+
+Tech Details
+============
+
+This parser still applies some tricks, stemming from the evolving nature of FHIR's profile definitions.
+Some tricks may have become obsolete and should be cleaned up.
+
+### How are property names determined?
+
+Every “property” of a class, meaning every `element` in a profile snapshot, is represented as a `FHIRStructureDefinitionElement` instance.
+If an element itself defines a class, e.g. `Patient.animal`, calling the instance's `as_properties()` method returns a list of `FHIRClassProperty` instances – usually only one – that indicates a class was found in the profile.
+The class of this property is derived from `element.type`, which is expected to only contain one entry, in this matter:
+
+- If _type_ is `BackboneElement`, a class name is constructed from the parent element (in this case _Patient_) and the property name (in this case _animal_), camel-cased (in this case _PatientAnimal_).
+- Otherwise, the type is taken as-is (e.g. _CodeableConcept_) and mapped according to mappings' `classmap`, which is expected to be a valid FHIR class.
+
+> TODO: should `http://hl7.org/fhir/StructureDefinition/structuredefinition-explicit-type-name` be respected?
+
+
+[license]: ./LICENSE.txt
+[hl7]: http://hl7.org/
+[fhir]: http://www.hl7.org/implement/standards/fhir/
+[jinja]: http://jinja.pocoo.org/
+[swift]: https://developer.apple.com/swift/
+[swift-fhir]: https://github.com/smart-on-fhir/Swift-FHIR
+[swift-smart]: https://github.com/smart-on-fhir/Swift-SMART
+[client-py]: https://github.com/smart-on-fhir/client-py

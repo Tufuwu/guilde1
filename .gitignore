@@ -1,13 +1,11 @@
-venv
-.DS_Store
-*.sublime-*
-dist/
-build/
-*.egg-info/
 *.pyc
-.coverage
-.noseids
-.vscode/
-.tox
-\.eggs/
-.idea
+__pycache__
+env
+/.idea/
+
+# ignore mappings and settings files
+/mappings.py
+/settings.py
+
+# ignore downloads
+/downloads
