@@ -1,52 +1,28 @@
+# How to Contribute
 
-Gabbi gets better because of the contributions from the people who use
-it. These contributions come in many forms:
+We'd love to accept your patches and contributions to this project. There are
+just a few small guidelines you need to follow.
 
-* Joining the #gabbi channel on Freenode IRC at freenode.net and
-  having a chat.
-* Improvements to make the documentation more complete, more correct
-  and typo free.
-* Reporting and reviewing bugs in the
-  [issues](https://github.com/cdent/gabbi/issues)
-* Providing [pull requests](https://github.com/cdent/gabbi/pulls)
-  containing fixes and new features. See [below](#pull-requests) for
-  guidelines.
+## Contributor License Agreement
 
-If you have an idea for a new feature it is best to review the
-[Ideas](https://github.com/cdent/gabbi/wiki/Ideas) wiki page and the
-existing issues and pull requests to see if there is existing work you
-can contribute to. It's also worthwhile to ask around in IRC.
+Contributions to this project must be accompanied by a Contributor License
+Agreement. You (or your employer) retain the copyright to your contribution;
+this simply gives us permission to use and redistribute your contributions as
+part of the project. Head over to <https://cla.developers.google.com/> to see
+your current agreements on file or to sign a new one.
 
-In general the default stance with gabbi is to avoid adding new features
-if we can come up with some way to use the existing features to solve
-the requirements of your tests. This helps to keep the test format
-as clean and readable as possible.
+You generally only need to submit a CLA once, so if you've already submitted one
+(even if it was for a different project), you probably don't need to do it
+again.
 
-If you reach an impasse, create an issue and provide as much info as you
-can about your situation and together we can try to figure it out.
+## Code Reviews
 
-# Pull Requests
+All submissions, including submissions by project members, require review. We
+use GitHub pull requests for this purpose. Consult
+[GitHub Help](https://help.github.com/articles/about-pull-requests/) for more
+information on using pull requests.
 
-If you want to make a pull request, fork the gabbi repository and create
-a new branch that will contain your changes. Name the branch something
-meaningful and related to your change.
+## Community Guidelines
 
-See the "Testing and Developing Gabbi" section of the the `README` for
-information on setting up a reasonable working environment.
-
-You should provide verbose commit messages on each of your commits. You
-should not feel obliged to squash your commits into one commit. We want
-to the see the full expression of your process and thinking.
-
-When you push your branch back to Github please never force push.
-
-If your pull request receives some comments and you need to make some
-changes, please do them as _an additional commit_ on the branch used for
-the pull request.
-
-Any code you submit should follow the rules of
-[pep8](https://www.python.org/dev/peps/pep-0008/). You can test that
-it does by running `tox -epep8` in your checkout. Note that when you
-run that the code will also be evaluated to be sure it follows some
-standards established in the OpenStack development community (mostly
-to do with import handling and line breaks).
+This project follows [Google's Open Source Community
+Guidelines](https://opensource.google/conduct/).
