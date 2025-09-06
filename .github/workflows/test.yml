@@ -14,27 +14,53 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.8"]
-
     steps:
-    - name: Check out repository
-      uses: actions/checkout@v2
+      - name: Check out the repository
+        uses: actions/checkout@v2
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - name: Upgrade pip
-      run: pip install --upgrade pip
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
-    - name: Install dependencies
-      run: pip install -r requirements.txt
+      - name: Install dependencies
+        run: pip install --editable .[dev]
 
-    - name: Install package
-      run: python setup.py develop
+      - name: Install test dependencies
+        run: pip install pytest pytest-cov
 
-    - name: Install nose
-      run: pip install nose
+      - name: Run tests
+        run: make check-tests
 
-    - name: Run tests
-      run: nosetests
+  additional-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install additional dependencies
+        run: pip install black mypy
+
+      - name: Run additional checks
+        run: make check
