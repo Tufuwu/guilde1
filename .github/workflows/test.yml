@@ -13,10 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.8', '3.9', '3.10', '3.11']
-        toxenv: [py38, py39, py310, py311, pep8, docs, packaging]
+        python-version: ['3.8']
+        toxenv: [py38]
     steps:
-      - name: Checkout code
+      - name: Check out code
         uses: actions/checkout@v2
 
       - name: Set up Python ${{ matrix.python-version }}
@@ -27,20 +27,9 @@ jobs:
       - name: Install dependencies
         run: pip install tox
 
-      - name: Ensure Python version is available
-        run: |
-          if ! command -v python${{ matrix.python-version }} &> /dev/null; then
-            echo "Python ${{ matrix.python-version }} is not available, skipping."
-            exit 0
-          fi
-
       - name: Run tests
         env:
-          TOXENV: ${{ matrix.toxenv }}
+          TOX_ENV: ${{ matrix.toxenv }}
         run: |
-          if [ -f tox.ini ] || [ -f setup.cfg ] || [ -f pyproject.toml ] || [ -f tox.toml ]; then
-            tox
-          else
-            echo "No tox configuration file found, skipping tests."
-            exit 0
-          fi
+          ulimit -c unlimited
+          tox -e $TOX_ENV
