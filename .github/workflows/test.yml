@@ -1,4 +1,4 @@
-name: CI
+name: Python CI
 
 on:
   push:
@@ -9,12 +9,11 @@ on:
       - main
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
-        python-version: ['3.8']
+        python-version: ["3.8"]
 
     steps:
     - name: Check out repository
@@ -25,11 +24,17 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Install dependencies
-      run: |
-        pip install sphinx${SPHINX_VERSION:+==$SPHINX_VERSION}
-        pip install -r requirements-travis.txt
+    - name: Upgrade pip
+      run: pip install --upgrade pip
 
-    - name: Run inspekt checks
-      run: |
-        inspekt checkall --disable-style E501,E265,W601,W605,E402,E722,E741,E0601,E0606 --no-license-check
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Install package
+      run: python setup.py develop
+
+    - name: Install nose
+      run: pip install nose
+
+    - name: Run tests
+      run: nosetests
