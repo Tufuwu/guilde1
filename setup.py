@@ -1,57 +1,50 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-try:
-    from setuptools import setup
-except ImportError:
-    from ez_setup import use_setuptools
-    use_setuptools()
-    from setuptools import setup
+#!/usr/bin/env python3
+from setuptools import setup
+from io import open
 
-
-from tastypie import __version__
-
+with open('description.rst', encoding='utf-8') as f:
+    description = f.read()
 
 setup(
-    name='django-tastypie',
-    version=__version__,
-    description='A flexible & capable API layer for Django.',
-    author='Daniel Lindsley',
-    author_email='daniel@toastdriven.com',
-    url='https://github.com/django-tastypie/django-tastypie',
-    long_description=open('README.rst', 'r').read(),
-    packages=[
-        'tastypie',
-        'tastypie.utils',
-        'tastypie.management',
-        'tastypie.management.commands',
-        'tastypie.migrations',
-        'tastypie.contrib',
-        'tastypie.contrib.gis',
-        'tastypie.contrib.contenttypes',
-    ],
-    package_data={
-        'tastypie': ['templates/tastypie/*'],
-    },
-    zip_safe=False,
-    requires=[
-        'python_mimeparse(>=0.1.4, !=1.5)',
-        'dateutil(>=1.5, !=2.0)',
-    ],
-    install_requires=[
-        'python-mimeparse >= 0.1.4, != 1.5',
-        'python-dateutil >= 1.5, != 2.0',
-    ],
-    tests_require=['mock', 'PyYAML', 'lxml', 'defusedxml'],
+    name='python-vipaccess',
+    version='0.13',
+    description="A free software implementation of Symantec's VIP Access application and protocol",
+    long_description=description,
+    url='https://github.com/dlenski/python-vipaccess',
+    author='Daniel Lenski',
+    author_email='dlenski@gmail.com',
+    license='Apache 2.0',
     classifiers=[
         'Development Status :: 4 - Beta',
-        'Environment :: Web Environment',
-        'Framework :: Django',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+        'Topic :: Utilities',
+        'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Topic :: Utilities'
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
     ],
+    keywords='development',
+    packages=['vipaccess'],
+    install_requires=[
+        # verify consistency with requirements.txt
+        'pycryptodome>=3.6.6',
+        'oath>=1.4.1',
+        'requests',
+    ],
+    entry_points={
+        'console_scripts': [
+            'vipaccess=vipaccess.__main__:main',
+        ],
+    },
+    test_requires=[
+        'nose>=1.0',
+    ],
+    test_suite='nose.collector',
 )
