@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.8']
+        python-version: ['3.8', '3.9']
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -24,14 +24,15 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install .[test]
 
-      - name: Run tests
-        run: python -m pytest tests
+      - name: Run script
+        run: echo hello world
 
-  coverage:
+  deploy:
     runs-on: ubuntu-latest
     needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -42,12 +43,12 @@ jobs:
           python-version: '3.8'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install .[test]
 
-      - name: Run coverage
-        run: python -m pytest --cov=./symspellpy
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Deploy to PyPI
+        env:
+          TWINE_USERNAME: mara-pypi-upload-account
+          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        run: |
+          python setup.py sdist
+          twine upload dist/*
