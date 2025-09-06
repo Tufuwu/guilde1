@@ -1,8 +1,8 @@
-.idea
-*.iml
+*.pyc
+MANIFEST
 dist
 build
-*.pyc
-.eggs
-*.egg-info
-.cache
+*.orig
+tags
+.tox
+pss.egg-info
