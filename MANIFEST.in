@@ -1,7 +1,8 @@
-recursive-include star_ratings/static *
-recursive-include star_ratings/templates *
-recursive-exclude star_ratings/static/star_ratings/js/node_modules *
-include README.rst
-include setup.cfg
-recursive-exclude * __pycache__
-recursive-exclude * *.py[co]
+include README.rst LICENSE.txt CHANGES.txt
+include requirements.txt
+include run-tests.py try-examples.py
+include tox.ini
+recursive-include tests *.py *.png
+recursive-include examples *.py *.ipynb
+recursive-include docs *.rst *.txt *.py *.png *.svg
+prune docs/_build

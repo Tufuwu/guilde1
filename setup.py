@@ -1,80 +1,43 @@
-import os
-import re
-import shutil
-import sys
+import pathlib
 from setuptools import setup, find_packages
 
-with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as readme:
-    README = readme.read()
-
-# allow setup.py to be run from any path
-os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
-
-
-def get_version(package):
-    """
-    Return package version as listed in `__version__` in `init.py`.
-    """
-    init_py = open(os.path.join(package, '__init__.py')).read()
-    return re.search('__version__ = [\'"]([^\'"]+)[\'"]', init_py).group(1)
-
-
-version = get_version('star_ratings')
-
-if sys.argv[-1] == 'publish':
-    if os.system('pip freeze | grep wheel'):
-        print('wheel not installed.\nUse `pip install wheel`.\nExiting.')
-        sys.exit()
-    if os.system('pip freeze | grep twine'):
-        print('twine not installed.\nUse `pip install twine`.\nExiting.')
-        sys.exit()
-    os.system('python setup.py sdist bdist_wheel')
-    os.system('twine upload dist/*')
-    print('You probably want to also tag the version now:')
-    print('  git tag -a {} -m \'version {}\''.format(version, version))
-    print('  git push --tags')
-    shutil.rmtree('dist')
-    shutil.rmtree('build')
-    shutil.rmtree('django_star_ratings.egg-info')
-    sys.exit()
-
 setup(
-    name='django-star-ratings',
-    version=version,
+    name='graphviz',
+    version='0.17.1.dev0',
+    author='Sebastian Bank',
+    author_email='sebastian.bank@uni-leipzig.de',
+    description='Simple Python interface for Graphviz',
+    keywords='graph visualization dot render',
+    license='MIT',
+    url='https://github.com/xflr6/graphviz',
+    project_urls={
+        'Documentation': 'https://graphviz.readthedocs.io',
+        'Changelog': 'https://graphviz.readthedocs.io/en/latest/changelog.html',
+        'Issue Tracker': 'https://github.com/xflr6/graphviz/issues',
+        'CI': 'https://github.com/xflr6/graphviz/actions',
+        'Coverage': 'https://codecov.io/gh/xflr6/graphviz',
+    },
     packages=find_packages(),
-    include_package_data=True,
-    package_data={
-        'star_ratings/static': ['*'],
-        'star_ratings/templates': ['*'],
-        '': ['README.rst', 'setup.cfg'],
+    platforms='any',
+    python_requires='>=3.6',
+    extras_require={
+        'dev': ['tox>=3', 'flake8', 'pep8-naming', 'wheel', 'twine'],
+        'test': ['mock>=3', 'pytest>=5.2', 'pytest-mock>=2', 'pytest-cov'],
+        'docs': ['sphinx>=1.8', 'sphinx-autodoc-typehints', 'sphinx-rtd-theme'],
     },
-    exclude_package_data={
-        '': ['__pycache__', '*.py[co]'],
-        'star_ratings/static/star_ratings/js/node_modules': ['*'],
-    },
-    license='BSD License',
-    description=('A Django app to add star ratings to models.'),
-    long_description=README,
-    url='https://github.com/wildfish/django-star-ratings',
-    author='Wildfish',
-    author_email='developers@wildfish.com',
-    keywords='ratings',
-    install_requires=[
-        'django',
-        'django-model-utils',
-        'django-braces',
-        'swapper',
-    ],
+    long_description=pathlib.Path('README.rst').read_text(encoding='utf-8'),
     classifiers=[
         'Development Status :: 4 - Beta',
-        'Environment :: Web Environment',
-        'Framework :: Django',
-        'License :: OSI Approved :: BSD License',
+        'Intended Audience :: Developers',
+        'Intended Audience :: Science/Research',
+        'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
-        'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Topic :: Scientific/Engineering :: Visualization',
     ],
 )

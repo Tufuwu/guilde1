@@ -1,90 +1,86 @@
-from __future__ import unicode_literals
-import os
+"""pytest command line options and fixtures."""
+
+import pathlib
+import platform as platform_
+
+import pytest
+
+DIRECTORY = pathlib.Path(__file__).parent
+
+SKIP_EXE = '--skip-exe'
 
 
-# From https://raw.githubusercontent.com/tomchristie/django-rest-framework/master/tests/conftest.py
+def pytest_addoption(parser):
+    parser.addoption(SKIP_EXE, action='store_true',
+                     help='skip tests that run Graphviz executables'
+                          ' or subprocesses')
 
-def pytest_configure():
-    from django.conf import settings
 
-    kwargs = {}
-    use_custom_model = os.environ.get('USE_CUSTOM_MODEL') == 'true'
+def pytest_configure(config):
+    config.addinivalue_line('markers',
+                            f'exe: skip if {SKIP_EXE} is given')
 
-    # This is for tests only, we need to handle that the Foo/Bar models needs a different primary key when running
-    # tests with STAR_RATINGS_RATING_MODEL, setting to leverage in tests.
-    kwargs['FOO_MODEL'] = 'tests.Foo'
-    kwargs['BAR_MODEL'] = 'tests.Bar'
 
-    if use_custom_model:
-        kwargs['STAR_RATINGS_RATING_MODEL'] = 'tests.MyRating'
-        kwargs['FOO_MODEL'] = 'tests.FooWithUUID'
-        kwargs['BAR_MODEL'] = 'tests.BarWithUUID'
+def pytest_collection_modifyitems(config, items):
+    if config.getoption(SKIP_EXE):
+        for item in items:
+            if 'exe' in item.keywords:
+                marker = pytest.mark.skip(reason=f'skipped by {SKIP_EXE} flag')
+                item.add_marker(marker)
 
-    settings.configure(
-        DEBUG_PROPAGATE_EXCEPTIONS=True,
-        DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3',
-                               'NAME': ':memory:'}},
-        SECRET_KEY='not very secret in tests',
-        USE_I18N=True,
-        USE_L10N=True,
-        STATIC_URL='/static/',
-        ROOT_URLCONF='tests.urls',
-        TEMPLATES=[
-            {
-                'BACKEND': 'django.template.backends.django.DjangoTemplates',
-                'APP_DIRS': True,
-                'OPTIONS': {
-                    'context_processors': [
-                        'django.template.context_processors.debug',
-                        'django.template.context_processors.request',
-                        'django.contrib.auth.context_processors.auth',
-                        'django.contrib.messages.context_processors.messages',
-                    ],
-                },
-            }
-        ],
-        MIDDLEWARE_CLASSES=(
-            'django.middleware.common.CommonMiddleware',
-            'django.contrib.sessions.middleware.SessionMiddleware',
-            'django.middleware.csrf.CsrfViewMiddleware',
-            'django.contrib.auth.middleware.AuthenticationMiddleware',
-            'django.contrib.messages.middleware.MessageMiddleware',
-        ),
-        MIDDLEWARE=(
-            'django.middleware.common.CommonMiddleware',
-            'django.contrib.sessions.middleware.SessionMiddleware',
-            'django.middleware.csrf.CsrfViewMiddleware',
-            'django.contrib.auth.middleware.AuthenticationMiddleware',
-            'django.contrib.messages.middleware.MessageMiddleware',
-        ),
-        INSTALLED_APPS=(
-            'django.contrib.auth',
-            'django.contrib.admin',
-            'django.contrib.contenttypes',
-            'django.contrib.sessions',
-            'django.contrib.sites',
-            'django.contrib.messages',
-            'django.contrib.staticfiles',
 
-            'model_utils',
+@pytest.fixture(scope='session')
+def files_path():
+    return DIRECTORY / 'files'
 
-            'tests',
-            'star_ratings',
-        ),
-        PASSWORD_HASHERS=(
-            'django.contrib.auth.hashers.SHA1PasswordHasher',
-            'django.contrib.auth.hashers.PBKDF2PasswordHasher',
-            'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
-            'django.contrib.auth.hashers.MD5PasswordHasher',
-            'django.contrib.auth.hashers.CryptPasswordHasher',
-        ),
 
-        STAR_RATINGS_RERATE=True,
-        **kwargs
-    )
+@pytest.fixture(scope='session')
+def platform():
+    return platform_.system().lower()
 
-    try:
-        import django
-        django.setup()
-    except AttributeError:
-        pass
+
+@pytest.fixture(params=['darwin', 'freebsd', 'linux', 'windows'],
+                ids=lambda p: f'platform={p!r}')
+def mock_platform(monkeypatch, request):
+    monkeypatch.setattr('graphviz.backend.PLATFORM', request.param)
+    yield request.param
+
+
+@pytest.fixture
+def unknown_platform(monkeypatch, name='nonplatform'):
+    monkeypatch.setattr('graphviz.backend.PLATFORM', name)
+    yield name
+
+
+@pytest.fixture
+def Popen(mocker):  # noqa: N802
+    yield mocker.patch('subprocess.Popen', autospec=True)
+
+
+@pytest.fixture
+def startfile(mocker, platform):
+    if platform == 'windows':
+        kwargs = {'autospec': True}
+    else:
+        kwargs = {'create': True, 'new_callable': mocker.Mock}
+    yield mocker.patch('os.startfile', **kwargs)
+
+
+@pytest.fixture
+def empty_path(monkeypatch):
+    monkeypatch.setenv('PATH', '')
+
+
+@pytest.fixture(params=[False, True], ids=lambda q: f'quiet={q!r}')
+def quiet(request):
+    return request.param
+
+
+@pytest.fixture
+def pipe(mocker):
+    yield mocker.patch('graphviz.backend.pipe', autospec=True)
+
+
+@pytest.fixture
+def render(mocker):
+    yield mocker.patch('graphviz.backend.render', autospec=True)

@@ -1,8 +1,49 @@
+.. graphviz documentation master file
+
 .. include:: ../README.rst
 
-Bugs and feature requests
--------------------------
 
-    https://github.com/wildfish/django-star-ratings/issues
+User Guide
+==========
 
-Created by `Wildfish <http://wildfish.com/>`_ and contributors.
+.. toctree::
+    :maxdepth: 2
+
+    manual
+
+
+Examples
+========
+
+.. toctree::
+    :maxdepth: 2
+
+    examples
+
+
+Notebooks
+=========
+
+.. toctree::
+    :maxdepth: 2
+
+    notebooks
+
+
+API Reference
+=============
+
+.. toctree::
+    :maxdepth: 2
+
+    api
+
+
+Project Info
+============
+
+.. toctree::
+    :maxdepth: 2
+
+    changelog
+    license
