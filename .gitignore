@@ -1,21 +1,13 @@
+# Python
 *.pyc
-*.egg-info
-*~
-*.swp
+/*.egg-info
+/.eggs
+/dist
 
-build/
-cas/
-dist/
-db.sqlite3
-manage.py
-coverage.xml
-docs/_build/
-docs/django.inv
+# coverage
+/.coverage
+/htmlcov
 
-.tox
-test_venv
-.coverage
-htmlcov/
-tox_logs/
-.cache/
-.eggs/
+# tests
+*.vcd
+*.gtkw
